@@ -8,5 +8,5 @@ class MainWindow : public wxFrame
 
 public:
    Window();
-
+   ~Window();
 };

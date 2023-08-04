@@ -6,7 +6,10 @@
 {
 
 }
+ MainWindow::~Window()
+ {
 
+ }
 
 
 
