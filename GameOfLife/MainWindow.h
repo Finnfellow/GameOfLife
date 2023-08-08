@@ -6,8 +6,12 @@
 
 class MainWindow : public wxFrame
 {
+private:
 	DrawingPanel* Panel = nullptr;
+	wxBoxSizer* _BoxSize = nullptr;
 public:
-	Window();
-	~Window();
+	
+	MainWindow();
+	~MainWindow();
+	void OnSizedChanged(wxSizeEvent& event);
 };
