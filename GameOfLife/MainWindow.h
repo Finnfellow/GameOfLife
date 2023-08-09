@@ -7,7 +7,7 @@
 class MainWindow : public wxFrame
 {
 private:
-	DrawingPanel* Panel = nullptr;
+	DrawingPanel* _Background = nullptr;
 	wxBoxSizer* _BoxSize = nullptr;
 public:
 	

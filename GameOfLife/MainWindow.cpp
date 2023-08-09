@@ -5,7 +5,7 @@
 
  MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0, 0), wxSize(300, 200))
  {
-	  DrawingPanel* _Background = new DrawingPanel(this, wxSize(100,100));
+	   _Background = new DrawingPanel(this, wxSize(100,100));
 
 
 	 _BoxSize = new wxBoxSizer(wxVERTICAL);
@@ -23,7 +23,8 @@
 
  void MainWindow::OnSizedChanged(wxSizeEvent& event)
  {
-	_Background
+	 _Background->SetSize(event.GetSize());
+	 _Background->Refresh();
  }
 
 
