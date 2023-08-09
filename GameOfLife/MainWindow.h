@@ -5,7 +5,6 @@
 #include <iostream>
 
 
-
 class MainWindow : public wxFrame
 {
 private:
@@ -20,4 +19,9 @@ public:
 	~MainWindow();
 	void OnSizedChanged(wxSizeEvent& event);
 	void InitializeGrid();
+
+
+
+
+	wxDECLARE_EVENT_TABLE();
 };

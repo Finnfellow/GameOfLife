@@ -3,7 +3,9 @@
 #include <vector>
 #include "MainWindow.h"
 #include "DrawingPanel.h"
-
+wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
+     EVT_SIZE(MainWindow::OnSizedChanged)
+END_EVENT_TABLE()
 
 MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0, 0), wxSize(300, 200))
 {
@@ -12,7 +14,7 @@ MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0,
 
 	_BoxSize = new wxBoxSizer(wxVERTICAL);
 	_BoxSize->Add(_Background, 1, wxEXPAND | wxALL);
-	Bind(wxEVT_SIZE, &MainWindow::OnSizedChanged, this);
+	//Bind(wxEVT_SIZE, &MainWindow::OnSizedChanged, this);
 
 	SetSizer(_BoxSize);
 	InitializeGrid();

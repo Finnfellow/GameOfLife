@@ -1,8 +1,13 @@
 #include "DrawingPanel.h"
+#include "MainWindow.h"
 #include <vector>
 #include <iostream>
 #include "wx/graphics.h"
 #include "wx/dcbuffer.h"
+wxBEGIN_EVENT_TABLE(DrawingPanel, wxPanel)
+      EVT_PAINT(DrawingPanel::OnPaint)
+	  EVT_LEFT_UP(DrawingPanel::OnMouseClick)
+wxEND_EVENT_TABLE()
 
 DrawingPanel::DrawingPanel(wxFrame* parent, wxSize size, std::vector<std::vector<bool>>& Grid)
 	: wxPanel(parent, wxID_ANY), rGridVector(Grid)
@@ -10,8 +15,8 @@ DrawingPanel::DrawingPanel(wxFrame* parent, wxSize size, std::vector<std::vector
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 	SetDoubleBuffered(true);
 
-	this->Bind(wxEVT_PAINT, &DrawingPanel::OnPaint, this);
-	this->Bind(wxEVT_LEFT_UP, &DrawingPanel::OnMouseClick, this);
+	/*this->Bind(wxEVT_PAINT, &DrawingPanel::OnPaint, this);
+	this->Bind(wxEVT_LEFT_UP, &DrawingPanel::OnMouseClick, this);*/
 }
 
 DrawingPanel::~DrawingPanel()

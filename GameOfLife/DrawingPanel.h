@@ -16,5 +16,11 @@ public:
 	void SetSize(wxSize& sizes);
 	void SetGridSize(int size);
 	void OnMouseClick(wxMouseEvent& event);
+
+
+
+	wxDECLARE_EVENT_TABLE();
 };
+
+
 
