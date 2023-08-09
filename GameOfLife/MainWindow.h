@@ -9,8 +9,10 @@ class MainWindow : public wxFrame
 {
 private:
 	int GameBoardGridSize = 15;
+	int Generations = 0;
+	int LivingCells = 0;
 	DrawingPanel* _Background = nullptr;
-
+	wxStatusBar* StatusBar = nullptr;
 	wxBoxSizer* _BoxSize = nullptr;
 	std::vector<std::vector<bool>> Gameboard;
 public:
