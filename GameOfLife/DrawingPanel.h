@@ -6,7 +6,7 @@ class DrawingPanel : public wxPanel
 {
 private:
 
-	int GridSize = 15;
+	int GridSize = 20;
 	std::vector<std::vector<bool>>& rGridVector;
 public:
 	DrawingPanel(wxFrame* parent, wxSize sizes, std::vector<std::vector<bool>>& Grid);
