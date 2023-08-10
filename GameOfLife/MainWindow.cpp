@@ -16,7 +16,9 @@
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
      EVT_SIZE(MainWindow::OnSizedChanged)
 	 EVT_MENU(10001,MainWindow::OnPlayButtonClick)
-	 
+	 EVT_MENU(10002,MainWindow::OnPauseButtonClick)
+	 EVT_MENU(10003,MainWindow::OnNextButtonClick)
+	 EVT_MENU(10004,MainWindow::OnTrashButtonClick)
 END_EVENT_TABLE()
 
 MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0, 0), wxSize(300, 200))
@@ -33,10 +35,10 @@ MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0,
 	_ToolBar->Realize();
 
 	StatusBar = CreateStatusBar(2);
-	wxString Bar1 = UpdateStatusBar(Gen,Generations);
-	wxString Bar2 = UpdateStatusBar(Cells, LivingCells);
-    SetStatusText(Bar1, 0);
-	SetStatusText(Bar2, 1);
+	GenBar = UpdateStatusBar(Gen,Generations);
+	LivingBar = UpdateStatusBar(Cells, LivingCells);
+    SetStatusText(GenBar, 0);
+	SetStatusText(LivingBar, 1);
 
 	
 
@@ -49,6 +51,7 @@ MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0,
 	InitializeGrid();
 
 	this->Layout();
+	
 }
 
 MainWindow::~MainWindow()
@@ -88,9 +91,7 @@ wxString MainWindow::UpdateStatusBar( wxString name, int Barnum)
 	{
 		statusText.Printf("Living Cells:   %d   ", LivingCells);
 	}
-		
-		//StatusBar->SetStatusText(statusText);
-	
+
 	return statusText;
 }
 
@@ -106,22 +107,83 @@ int MainWindow::NeighborCount(int row, int column)
 	{
 		for (int j = -1; j < 2; j++)
 		{
-			if(i==0 && j == 0)
+			if(row==0 && column == 0)
 			{
 				continue;
 			}
-			if (i && j > 2 | i && j > -1)
-			{
-				continue;
-		   }
-			if (i + row && j+column == true)
+			
+			if (i + row && j + column == true)
 			{
 				CellsAlive++;
 			}
-			
 
 		}
 	}
 
 	return CellsAlive;
+}
+
+void MainWindow::NextGeneration()
+{
+	std::vector<std::vector<bool>> SandBox;
+	SandBox.resize(GameBoardGridSize);
+	for (int i = 0; i < SandBox.size(); i++)
+	{
+		SandBox[i].resize(GameBoardGridSize);
+	}
+	
+
+	for (int i = 0; i < Gameboard.size(); i++)
+	{
+		for (int j = 0; j < Gameboard.size(); j++)
+		{
+			bool Cell = Gameboard[i][j];
+			int Neighbors = NeighborCount(i, j);
+			if (Cell == true && Neighbors < 2)
+			{
+				SandBox[i][j] = false;
+			}
+		    else if (Cell == true && (Neighbors==2 || Neighbors==3))
+		    {
+			   SandBox[i][j] = true;
+			   LivingCells++;
+			}
+			
+			else if (Cell == true && Neighbors > 3)
+			{
+				SandBox[i][j] = false;
+			}
+			else if (Cell == false && Neighbors == 3)
+			{
+				SandBox[i][j] == true;
+				LivingCells++;
+			}
+
+
+		}
+			
+			
+	}
+	
+	SandBox.swap(Gameboard);
+	Generations++;
+	LivingBar = UpdateStatusBar(Cells, LivingCells);
+	GenBar = UpdateStatusBar(Gen, Generations);
+	SetStatusText(GenBar, 0);
+	SetStatusText(LivingBar, 1);
+	Refresh();
+}
+
+void MainWindow::OnTrashButtonClick(wxCommandEvent& tEvent)
+{
+
+}
+void MainWindow::OnPauseButtonClick(wxCommandEvent& pEvent)
+{
+
+}
+void MainWindow::OnNextButtonClick(wxCommandEvent& nEvent) 
+{
+	NextGeneration();
+
 }

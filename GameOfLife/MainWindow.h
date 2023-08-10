@@ -11,7 +11,8 @@ private:
 	int GameBoardGridSize = 15;
 	int Generations = 0;
 	int LivingCells = 0;
-
+	wxString GenBar = "";
+	wxString LivingBar = "";
 	wxString Gen = "Generations:";
 	wxString Cells = "Living Cells:";
 	DrawingPanel* _Background = nullptr;
@@ -28,7 +29,11 @@ public:
 	void InitializeGrid();
 	wxString UpdateStatusBar( wxString name, int number);
 	void OnPlayButtonClick(wxCommandEvent& cEvent);
+	void OnTrashButtonClick(wxCommandEvent& tEvent);
+	void OnPauseButtonClick(wxCommandEvent& pEvent);
+	void OnNextButtonClick(wxCommandEvent& nEvent);
 	int NeighborCount(int row, int column);
+	void NextGeneration();
 
 	wxDECLARE_EVENT_TABLE();
 };
