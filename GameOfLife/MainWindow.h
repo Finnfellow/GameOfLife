@@ -28,6 +28,7 @@ public:
 	void InitializeGrid();
 	wxString UpdateStatusBar( wxString name, int number);
 	void OnPlayButtonClick(wxCommandEvent& cEvent);
+	int NeighborCount(int row, int column);
 
 	wxDECLARE_EVENT_TABLE();
 };

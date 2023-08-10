@@ -15,8 +15,7 @@ DrawingPanel::DrawingPanel(wxFrame* parent, wxSize size, std::vector<std::vector
 	SetBackgroundStyle(wxBG_STYLE_PAINT);
 	SetDoubleBuffered(true);
 
-	/*this->Bind(wxEVT_PAINT, &DrawingPanel::OnPaint, this);
-	this->Bind(wxEVT_LEFT_UP, &DrawingPanel::OnMouseClick, this);*/
+	
 }
 
 DrawingPanel::~DrawingPanel()

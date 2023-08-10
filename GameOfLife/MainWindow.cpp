@@ -98,3 +98,30 @@ void MainWindow::OnPlayButtonClick(wxCommandEvent& cEvent)
 {
 
 }
+
+int MainWindow::NeighborCount(int row, int column)
+{
+	int CellsAlive = 0;
+	for (int i = -1; i < 2; i++)
+	{
+		for (int j = -1; j < 2; j++)
+		{
+			if(i==0 && j == 0)
+			{
+				continue;
+			}
+			if (i && j > 2 | i && j > -1)
+			{
+				continue;
+		   }
+			if (i + row && j+column == true)
+			{
+				CellsAlive++;
+			}
+			
+
+		}
+	}
+
+	return CellsAlive;
+}
