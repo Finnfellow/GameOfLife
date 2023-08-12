@@ -11,6 +11,7 @@ private:
 	int GameBoardGridSize = 15;
 	int Generations = 0;
 	int LivingCells = 0;
+	int Timer = 50; 
 	wxString GenBar = "";
 	wxString LivingBar = "";
 	wxString Gen = "Generations:";
@@ -19,7 +20,9 @@ private:
 	wxStatusBar* StatusBar = nullptr;
 	wxBoxSizer* _BoxSize = nullptr;
 	wxToolBar* _ToolBar = nullptr;
+	wxTimer* _Time = nullptr;
 
+	std::vector<std::vector<bool>> SandBox;
 	std::vector<std::vector<bool>> Gameboard;
 public:
 
@@ -32,6 +35,7 @@ public:
 	void OnTrashButtonClick(wxCommandEvent& tEvent);
 	void OnPauseButtonClick(wxCommandEvent& pEvent);
 	void OnNextButtonClick(wxCommandEvent& nEvent);
+	void StartTimer(wxTimerEvent& tEvent);
 	int NeighborCount(int row, int column);
 	void NextGeneration();
 

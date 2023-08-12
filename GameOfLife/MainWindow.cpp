@@ -7,11 +7,14 @@
 #include "pause.xpm"
 #include "next.xpm"
 #include "trash.xpm"
+#include "wx/graphics.h"
+#include "wx/dcbuffer.h"
 
 #define TOOLBAR_PLAY_ICON_ 10001
 #define TOOLBAR_PAUSE_ICON 10002
 #define TOOLBAR_NEXT_ICON 10003
 #define TOOLBAR_TRASH_ICON 10004
+#define TIMER_EVENT 10005
 
 wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
      EVT_SIZE(MainWindow::OnSizedChanged)
@@ -19,9 +22,10 @@ wxBEGIN_EVENT_TABLE(MainWindow, wxFrame)
 	 EVT_MENU(10002,MainWindow::OnPauseButtonClick)
 	 EVT_MENU(10003,MainWindow::OnNextButtonClick)
 	 EVT_MENU(10004,MainWindow::OnTrashButtonClick)
+     EVT_TIMER(10005, MainWindow::StartTimer)
 END_EVENT_TABLE()
 
-MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0, 0), wxSize(300, 200))
+MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0, 0), wxSize(700, 900))
 {
 	wxBitmap PlayIcon(play_xpm);
 	wxBitmap PauseIcon(pause_xpm);
@@ -39,13 +43,13 @@ MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "Game Of Life", wxPoint(0,
 	LivingBar = UpdateStatusBar(Cells, LivingCells);
     SetStatusText(GenBar, 0);
 	SetStatusText(LivingBar, 1);
-
+	
 	
 
 	_Background = new DrawingPanel(this, wxSize(100, 100), Gameboard);
 	_BoxSize = new wxBoxSizer(wxVERTICAL);
 	_BoxSize->Add(_Background, 1, wxEXPAND | wxALL);
-	
+	_Time = new wxTimer(this, 10005);
 
 	SetSizer(_BoxSize);
 	InitializeGrid();
@@ -78,6 +82,13 @@ void MainWindow::InitializeGrid()
 		Gameboard[i].resize(GameBoardGridSize);
 	}
 	_Background->SetGridSize(GameBoardGridSize);
+
+	
+	SandBox.resize(GameBoardGridSize);
+	for (int i = 0; i < SandBox.size(); i++)
+	{
+		SandBox[i].resize(GameBoardGridSize);
+	}
 }
 wxString MainWindow::UpdateStatusBar( wxString name, int Barnum)
 {
@@ -95,77 +106,85 @@ wxString MainWindow::UpdateStatusBar( wxString name, int Barnum)
 	return statusText;
 }
 
-void MainWindow::OnPlayButtonClick(wxCommandEvent& cEvent)
-{
 
-}
 
 int MainWindow::NeighborCount(int row, int column)
 {
-	int CellsAlive = 0;
-	for (int i = -1; i < 2; i++)
+	int livingNeighbors = 0;
+
+	for (int i = row - 1; i <= row + 1; ++i)
 	{
-		for (int j = -1; j < 2; j++)
+		for (int j = column - 1; j <= column + 1; ++j)
 		{
-			if(row==0 && column == 0)
+			if (i == row && j == column)
 			{
 				continue;
 			}
-			
-			if (i + row && j + column == true)
-			{
-				CellsAlive++;
-			}
 
+			if (i >= 0 && i < GameBoardGridSize && j >= 0 && j < GameBoardGridSize)
+			{
+				if (Gameboard[i][j])
+				{
+					livingNeighbors++;
+				}
+			}
 		}
 	}
-
-	return CellsAlive;
+	return livingNeighbors;
 }
 
 void MainWindow::NextGeneration()
 {
-	std::vector<std::vector<bool>> SandBox;
-	SandBox.resize(GameBoardGridSize);
-	for (int i = 0; i < SandBox.size(); i++)
-	{
-		SandBox[i].resize(GameBoardGridSize);
-	}
 	
-
+	
+	int alivetracker = 0;
 	for (int i = 0; i < Gameboard.size(); i++)
 	{
 		for (int j = 0; j < Gameboard.size(); j++)
 		{
-			bool Cell = Gameboard[i][j];
+			
 			int Neighbors = NeighborCount(i, j);
-			if (Cell == true && Neighbors < 2)
+			
+			if (Gameboard[i][j] || Gameboard[i][j] == false)
 			{
-				SandBox[i][j] = false;
-			}
-		    else if (Cell == true && (Neighbors==2 || Neighbors==3))
-		    {
-			   SandBox[i][j] = true;
-			   LivingCells++;
+				if (Gameboard[i][j] == true)
+				{
+					if (Neighbors < 2)
+					{
+						SandBox[i][j] = false;
+					}
+					if (Neighbors > 3)
+					{
+						SandBox[i][j] = false;
+					}
+					if (Neighbors == 2)
+					{
+						SandBox[i][j] = true;
+						alivetracker++;
+					}
+					if (Neighbors == 3)
+					{
+						SandBox[i][j] = true;
+						alivetracker++;
+					}
+				}
+				if (Gameboard[i][j] == false)
+				{
+					if (Neighbors == 3)
+					{
+						SandBox[i][j] = true;
+						alivetracker++;
+					}
+					
+				}
 			}
 			
-			else if (Cell == true && Neighbors > 3)
-			{
-				SandBox[i][j] = false;
-			}
-			else if (Cell == false && Neighbors == 3)
-			{
-				SandBox[i][j] == true;
-				LivingCells++;
-			}
-
-
 		}
 			
 			
 	}
-	
-	SandBox.swap(Gameboard);
+	LivingCells = alivetracker;
+	Gameboard.swap(SandBox);
 	Generations++;
 	LivingBar = UpdateStatusBar(Cells, LivingCells);
 	GenBar = UpdateStatusBar(Gen, Generations);
@@ -176,14 +195,48 @@ void MainWindow::NextGeneration()
 
 void MainWindow::OnTrashButtonClick(wxCommandEvent& tEvent)
 {
+	for (int i = 0; i < Gameboard.size(); i++)
+	{
+		for (int j = 0; j < Gameboard.size(); j++)
+		{
+			Gameboard[i][j] = false;
+		}
+	}
+
+	for (int i = 0; i < SandBox.size(); i++)
+	{
+		for (int j = 0; j <SandBox.size(); j++)
+		{
+			SandBox[i][j] = false;
+		}
+	}
+
+	LivingCells = 0;
+	Generations = 0;
+	LivingBar = UpdateStatusBar(Cells, LivingCells);
+	GenBar = UpdateStatusBar(Gen, Generations);
+	SetStatusText(GenBar, 0);
+	SetStatusText(LivingBar, 1);
+	Refresh();
 
 }
 void MainWindow::OnPauseButtonClick(wxCommandEvent& pEvent)
 {
-
+	if (_Time->IsRunning())
+	{
+		_Time->Stop();
+	}
 }
 void MainWindow::OnNextButtonClick(wxCommandEvent& nEvent) 
 {
 	NextGeneration();
 
+}
+void MainWindow::StartTimer(wxTimerEvent& tEvent)
+{
+	NextGeneration();
+}
+void MainWindow::OnPlayButtonClick(wxCommandEvent& cEvent)
+{
+	_Time->Start(Timer);
 }
